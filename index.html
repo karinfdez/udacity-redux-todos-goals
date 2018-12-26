@@ -137,7 +137,11 @@
 
         const store = createStore(app);
         store.subscribe(() => {
-            console.log('The new state is: ', store.getState());
+            const { goals, todos } = store.getState();
+            document.querySelector('#goals').innerHTML = ''; //Resetting content inside ul everytime state changes
+            document.querySelector('#todos').innerHTML = '';
+            goals.forEach(goal => addElemToDOM(goal, '#goals'));
+            todos.forEach(todo => addElemToDOM(todo, '#todos'));
         })
 
         function addTodo () {
@@ -164,37 +168,13 @@
         document.querySelector('#todoBtn').addEventListener('click', addTodo);
         document.querySelector('#goalBtn').addEventListener('click', addGoal);
 
-        // store.dispatch(addTodoAction({
-        //     id: 0,
-        //     name: 'Learn Redux',
-        //     complete: false
-        // }))
-
-
-        // store.dispatch(addTodoAction({
-        //     id: 1,
-        //     name: 'Go for a walk',
-        //     complete: true
-        // }));
-
-        // store.dispatch(addTodoAction({
-        //     id: 2,
-        //     name: 'Go to the gym',
-        //     complete: false
-        // }));
-
-        // store.dispatch(removeTodoAction(1))
-        // store.dispatch(toggleTodoAction(0))
-
-        // store.dispatch(addGoalAction({
-        //     id: 0,
-        //     name: 'Lear Redux'
-        // }))
-
-        // store.dispatch(addGoalAction({
-        //     id: 1,
-        //     name: 'Lose 20 pounds'
-        // }))
+        function addElemToDOM (elem, selector) {
+            const node = document.createElement('li');
+            const text = document.createTextNode(elem.name);
+            node.appendChild(text);
+            //Add the new element to the ul
+            document.querySelector(selector).appendChild(node);
+        }
 
         // store.dispatch(removeGoalAction(0))
 
