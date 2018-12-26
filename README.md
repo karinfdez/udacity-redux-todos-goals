@@ -1,2 +1,2 @@
 # udacity-redux-todos-goals
-Udacity nano degree program Redux Lesson 
+This exercise is part of the Udacity nanodegree program Redux Lesson. It teaches how to get familiarized with Redux
