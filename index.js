@@ -149,8 +149,31 @@
             const node = document.createElement('li');
             const text = document.createTextNode(elem.name);
             node.appendChild(text);
+            elem.hasOwnProperty('complete') && !!elem.complete &&
+            node.classList.add('text-lined');
+            node.addEventListener('click', () => {
+                store.dispatch(toggleTodoAction(elem.id))
+            })
+            
+            // let nodeBtn;
+            // let textBtn;
             //Add the new element to the ul
+            // if(elem.hasOwnProperty('complete') && !elem.complete) {
+            //     nodeBtn = document.createElement('button');
+            //     textBtn = document.createTextNode('Mark as completed');
+            //     nodeBtn.appendChild(textBtn);
+            //     node.appendChild(nodeBtn);
+            // }
+            // nodeBtn && nodeBtn.addEventListener('click', markAsCompleted);
             document.querySelector(selector).appendChild(node);
         }
 
-        // store.dispatch(removeGoalAction(0))
+        // function markAsCompleted(e) {
+        //     // elem.complete = true; PENDING
+        //     // console.log('aaa', e.currentTarget);
+        //     const parentElement = e.currentTarget.parentElement;
+        //     parentElement.classList.add('text-lined');
+        //     // if (parentElement.hasChildNodes()) {
+        //     //     e.currentTarget.remove();
+        //     // }
+        // }
