@@ -28,17 +28,21 @@
     <div id='app'></div>
     <script src="index.js"></script>
     <script type='text/babel'>
-
+        
         function List (props) {
             return (
                 <ul>
-                    <li>LIST</li>
+                    {props.items.map((item) => (
+                        <li key={item.id}>
+                           {item.name}
+                           <button onClick={()=> props.remove(item)}>X</button>
+                        </li>
+                    ))}
                 </ul>
             )
         }
 
         class Todos extends React.Component {
-            
             addTodo = (e) => {
                 e.preventDefault();
                 const name = this.input.value;
@@ -50,6 +54,9 @@
                     id: generateId()
                 }))
             }
+            removeItem = (todo) => {
+                this.props.store.dispatch(removeTodoAction(todo.id))
+            }
             render() {
                 return (
                     <div>
@@ -59,14 +66,15 @@
                             placeholder='Add Todo'
                             ref={(input) => this.input = input} 
                         />  
-                        <button onClick={this.addTodo}>Add Todo</button>                     
+                        <button onClick={this.addTodo}>Add Todo</button>    
+                        <List remove={this.removeItem} items={this.props.todos}/>                 
                     </div>
                 )
             }
         }
 
         class Goals extends React.Component {
-            addGoal = (e) => {
+            addItem = (e) => {
                 e.preventDefault();
                 const name = this.input.value;
                 this.input.value = '';
@@ -74,6 +82,9 @@
                     id: generateId(),
                     name
                 }))
+            }
+            removeItem = (goal) => {
+                this.props.store.dispatch(removeGoalAction(goal.id))
             }
             render() {
                 return (
@@ -84,7 +95,11 @@
                             placeholder='Add Goal'
                             ref={(input) => this.input = input}
                         />
-                        <button onClick={this.addGoal}>Add Goal</button>
+                        <button onClick={this.addItem}>Add Goal</button>
+                        <List 
+                            items={this.props.goals}
+                            remove={this.removeItem}
+                        />                 
                     </div>
                 )
             }
