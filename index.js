@@ -4,34 +4,6 @@
             return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36);
         }
 
-        //Library Code
-        function createStore(reducer) {
-            
-            let state;
-            let listeners = [];
-
-            
-            const getState = () => state   //Returns the state
-
-            const subscribe = (listener) => {   //Listens for change
-                listeners.push(listener);
-                return () => {
-                    // listeners = listeners.filter((l) !== listener)
-                }
-            }
-
-            const dispatch = (action) => {   //Updates the state inside the appStore
-                state = reducer(state, action);
-                listeners.forEach((listener) => listener());
-            }
-            
-            return {
-                getState,
-                subscribe,
-                dispatch
-            }
-        }
-
         //App Code
         const ADD_TODO = 'ADD_TODO';
         const REMOVE_TODO = 'REMOVE_TODO';
@@ -104,21 +76,16 @@
             }
         }
 
-        function app(state = {}, action) {
-            return {
-                todos: todos(state.todos, action),
-                goals: goals(state.goals, action)
-            }
-        }
-
-
-        const store = createStore(app);
+        const store = Redux.createStore(Redux.combineReducers({
+            todos,
+            goals,
+        }));
         store.subscribe(() => {
             const { goals, todos } = store.getState();
             document.querySelector('#goals').innerHTML = ''; //Resetting content inside ul everytime state changes
             document.querySelector('#todos').innerHTML = '';
-            goals.forEach(goal => addElemToDOM(goal, '#goals'));
-            todos.forEach(todo => addElemToDOM(todo, '#todos'));
+            goals.forEach(goal => addElemToDOM(goal, '#goals', removeGoalAction, goal.id));
+            todos.forEach(todo => addElemToDOM(todo, '#todos', removeTodoAction, todo.id));
         })
 
         function addTodo () {
@@ -145,35 +112,25 @@
         document.querySelector('#todoBtn').addEventListener('click', addTodo);
         document.querySelector('#goalBtn').addEventListener('click', addGoal);
 
-        function addElemToDOM (elem, selector) {
+        function createRemoveBtn(onClick) {
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = 'X';
+            removeBtn.addEventListener('click', onClick);
+            return removeBtn;
+        }
+
+        function addElemToDOM (elem, selector, removeAction, elemId) {
             const node = document.createElement('li');
             const text = document.createTextNode(elem.name);
+            const removeBtn = createRemoveBtn(() => {
+                store.dispatch(removeAction(elemId))
+            })
             node.appendChild(text);
+            node.appendChild(removeBtn);
             elem.hasOwnProperty('complete') && !!elem.complete &&
             node.classList.add('text-lined');
             node.addEventListener('click', () => {
                 store.dispatch(toggleTodoAction(elem.id))
             })
-            
-            // let nodeBtn;
-            // let textBtn;
-            //Add the new element to the ul
-            // if(elem.hasOwnProperty('complete') && !elem.complete) {
-            //     nodeBtn = document.createElement('button');
-            //     textBtn = document.createTextNode('Mark as completed');
-            //     nodeBtn.appendChild(textBtn);
-            //     node.appendChild(nodeBtn);
-            // }
-            // nodeBtn && nodeBtn.addEventListener('click', markAsCompleted);
             document.querySelector(selector).appendChild(node);
         }
-
-        // function markAsCompleted(e) {
-        //     // elem.complete = true; PENDING
-        //     // console.log('aaa', e.currentTarget);
-        //     const parentElement = e.currentTarget.parentElement;
-        //     parentElement.classList.add('text-lined');
-        //     // if (parentElement.hasChildNodes()) {
-        //     //     e.currentTarget.remove();
-        //     // }
-        // }
