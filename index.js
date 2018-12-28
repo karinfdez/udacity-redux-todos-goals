@@ -76,27 +76,33 @@
             }
         }
 
-        function checkAndDispatch(store, action) {
-            if(
-                action.type === ADD_TODO &&
-                action.todo.name.toLowerCase().includes('bitcoin')
-            ) {
-                return alert(`Nope. That's a bad idea`);
+        function checker (store) {
+            return function (next) {
+                return function (action) {
+                    if(
+                        action.type === ADD_TODO &&
+                        action.todo.name.toLowerCase().includes('bitcoin')
+                    ) {
+                        return alert(`Nope. That's a bad idea`);
+                    }
+        
+                    if(
+                        action.type === ADD_GOAL &&
+                        action.goal.name.toLowerCase().includes('bitcoin')
+                    ) {
+                        return alert(`Nope. That's a bad idea`);
+                    }
+                    return next(action); //It is going to be either the next middleware if there is more
+                    //than one or will be store.dispatch
+                }
             }
 
-            if(
-                action.type === ADD_GOAL &&
-                action.goal.name.toLowerCase().includes('bitcoin')
-            ) {
-                return alert(`Nope. That's a bad idea`);
-            }
-            return store.dispatch(action);
         }
 
         const store = Redux.createStore(Redux.combineReducers({
             todos,
             goals,
-        }));
+        }), Redux.applyMiddleware(checker));
         
         store.subscribe(() => {
             const { goals, todos } = store.getState();
@@ -110,7 +116,7 @@
             const input = document.querySelector('#todo');
             const name = input.value.trim();
             input.value = '';
-            checkAndDispatch(store, addTodoAction({
+            store.dispatch(addTodoAction({
                 id: generateId(),
                 name,
                 complete: false
@@ -121,7 +127,7 @@
             const input = document.querySelector('#goal');
             const name = input.value.trim();
             input.value = '';
-            checkAndDispatch(store, addGoalAction({
+            store.dispatch(addGoalAction({
                 id: generateId(),
                 name
             }))
@@ -141,14 +147,14 @@
             const node = document.createElement('li');
             const text = document.createTextNode(elem.name);
             const removeBtn = createRemoveBtn(() => {
-                checkAndDispatch(store, removeAction(elemId))
+                store.dispatch(removeAction(elemId))
             })
             node.appendChild(text);
             node.appendChild(removeBtn);
             elem.hasOwnProperty('complete') && !!elem.complete &&
             node.classList.add('text-lined');
             node.addEventListener('click', () => {
-                checkAndDispatch(store, toggleTodoAction(elem.id))
+                store.dispatch(toggleTodoAction(elem.id))
             })
             document.querySelector(selector).appendChild(node);
         }
