@@ -4,7 +4,7 @@
             return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36);
         }
 
-        //App Code
+        //Actions
         const ADD_TODO = 'ADD_TODO';
         const REMOVE_TODO = 'REMOVE_TODO';
         const TOGGLE_TODO = 'TOGGLE_TODO';
@@ -46,7 +46,7 @@
             }
         }
 
-
+        //Reducers
         function todos (state = [], action) {
             switch(action.type) {
                 case ADD_TODO :
@@ -76,10 +76,28 @@
             }
         }
 
+        function checkAndDispatch(store, action) {
+            if(
+                action.type === ADD_TODO &&
+                action.todo.name.toLowerCase().includes('bitcoin')
+            ) {
+                return alert(`Nope. That's a bad idea`);
+            }
+
+            if(
+                action.type === ADD_GOAL &&
+                action.goal.name.toLowerCase().includes('bitcoin')
+            ) {
+                return alert(`Nope. That's a bad idea`);
+            }
+            return store.dispatch(action);
+        }
+
         const store = Redux.createStore(Redux.combineReducers({
             todos,
             goals,
         }));
+        
         store.subscribe(() => {
             const { goals, todos } = store.getState();
             document.querySelector('#goals').innerHTML = ''; //Resetting content inside ul everytime state changes
@@ -92,7 +110,7 @@
             const input = document.querySelector('#todo');
             const name = input.value.trim();
             input.value = '';
-            store.dispatch(addTodoAction({
+            checkAndDispatch(store, addTodoAction({
                 id: generateId(),
                 name,
                 complete: false
@@ -103,7 +121,7 @@
             const input = document.querySelector('#goal');
             const name = input.value.trim();
             input.value = '';
-            store.dispatch(addGoalAction({
+            checkAndDispatch(store, addGoalAction({
                 id: generateId(),
                 name
             }))
@@ -123,14 +141,14 @@
             const node = document.createElement('li');
             const text = document.createTextNode(elem.name);
             const removeBtn = createRemoveBtn(() => {
-                store.dispatch(removeAction(elemId))
+                checkAndDispatch(store, removeAction(elemId))
             })
             node.appendChild(text);
             node.appendChild(removeBtn);
             elem.hasOwnProperty('complete') && !!elem.complete &&
             node.classList.add('text-lined');
             node.addEventListener('click', () => {
-                store.dispatch(toggleTodoAction(elem.id))
+                checkAndDispatch(store, toggleTodoAction(elem.id))
             })
             document.querySelector(selector).appendChild(node);
         }
