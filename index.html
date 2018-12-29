@@ -11,6 +11,7 @@
     <script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script> 
     <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script> 
+    <script src="https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js"></script>
 </head>
 <body>
     <hr />
@@ -52,15 +53,7 @@
             }
 
             removeItem = (todo) => {
-                //1. First remove from Redux store(to hide it form the UI
-                //2. Then delete that todo from API. In case of an error, add it again.
-                this.props.store.dispatch(removeTodoAction(todo.id)) //Remove todo state from store
-                
-                return API.deleteTodo(todo.id) //Removing todo from API
-                .catch(() => {
-                    this.props.store.dispatch(addTodoAction(todo))
-                    alert('An error ocurred. Try again!');
-                })
+                this.props.store.dispatch(handleDeleteTodo(todo)) //Remove todo state from store
             }
 
             toggleItem = (id) => {

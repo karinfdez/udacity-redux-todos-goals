@@ -19,6 +19,17 @@
             }
         }
 
+        function handleDeleteTodo(todo) { 
+            return (dispatch) => {
+                dispatch(removeTodoAction(todo.id));
+                return API.deleteTodo(todo.id) //Removing todo from API
+                .catch(() => {
+                    dispatch(addTodoAction(todo))
+                    alert('An error ocurred. Try again!');
+                })
+            }
+        }
+
         function removeTodoAction(id) {
             return {
                 type: REMOVE_TODO,
@@ -124,6 +135,6 @@
             todos,
             goals,
             loading
-        }), Redux.applyMiddleware(checker));
+        }), Redux.applyMiddleware(ReduxThunk.default, checker));
         
        
