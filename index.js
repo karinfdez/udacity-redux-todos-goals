@@ -43,6 +43,31 @@
             }
         }
 
+        function handleAddTodo(name, cb) {
+            return(dispatch) => {
+                return API.saveTodo(name)
+                .then(todo => {
+                    dispatch(addTodoAction(todo))
+                    cb();
+                }) 
+                .catch(() => {
+                    alert('There was an error. Try again!');
+                })
+            }
+        }
+
+        function handleToggleTodo(id) {
+            return (dispatch) => {
+                dispatch(toggleTodoAction(id))
+        
+                return API.saveTodoToggle(id)
+                .catch(() => {
+                    dispatch(toggleTodoAction(id));
+                    alert('An error ocurred. Try again!');
+                })
+            }
+        }
+
         function handleAddGoal (name, cb) {
             return (dispatch) => {
                 return API.saveGoal(name)

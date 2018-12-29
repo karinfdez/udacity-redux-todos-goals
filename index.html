@@ -41,15 +41,10 @@
             
             addTodo = (e) => {
                 e.preventDefault();
-                const name = this.input.value;
-                return API.saveTodo(name)
-                .then(todo => {
-                    this.props.store.dispatch(addTodoAction(todo))
-                    this.input.value = '';
-                }) 
-                .catch(() => {
-                    alert('There was an error. Try again!');
-                })
+                this.props.store.dispatch(handleAddTodo(
+                    this.input.value,
+                    () => this.input.value = ''
+                ))
             }
 
             removeItem = (todo) => {
@@ -57,12 +52,7 @@
             }
 
             toggleItem = (id) => {
-                this.props.store.dispatch(toggleTodoAction(id))
-                return API.saveTodoToggle(id)
-                .catch(() => {
-                    this.props.store.dispatch(toggleTodoAction(id));
-                    alert('An error ocurred. Try again!');
-                })
+                this.props.store.dispatch(handleToggleTodo(id))
             }
 
             render() {
