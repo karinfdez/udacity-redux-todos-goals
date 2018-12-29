@@ -10,6 +10,7 @@
         const TOGGLE_TODO = 'TOGGLE_TODO';
         const ADD_GOAL = 'ADD_GOAL';
         const REMOVE_GOAL = 'REMOVE_GOAL';
+        const RECEIVE_DATA = 'RECEIVE_DATA';
 
         function addTodoAction(todo) {
             return {
@@ -22,6 +23,14 @@
             return {
                 type: REMOVE_TODO,
                 id
+            }
+        }
+
+        function receiveDataAction(todos, goals) {
+            return {
+                type: RECEIVE_DATA,
+                todos,
+                goals
             }
         }
 
@@ -52,14 +61,16 @@
                 case ADD_TODO :
                     return state.concat([action.todo]);
                 case REMOVE_TODO : 
-                return state.filter(todo => {
-                    return todo.id !== action.id;
-                }) 
+                    return state.filter(todo => {
+                        return todo.id !== action.id;
+                    }) 
                 case TOGGLE_TODO : 
-                return state.map((todo) => todo.id !== action.id ? todo : 
-                Object.assign({}, todo, { complete: !todo.complete }))
+                    return state.map((todo) => todo.id !== action.id ? todo : 
+                    Object.assign({}, todo, { complete: !todo.complete }))
+                case RECEIVE_DATA:
+                    return action.todos
                 default:
-                return state; 
+                    return state; 
             }
         }
 
@@ -68,9 +79,11 @@
                 case ADD_GOAL :
                     return state.concat([action.goal]);
                 case REMOVE_GOAL : 
-                return state.filter(goal => {
-                    return goal.id !== action.id;
-                }) 
+                    return state.filter(goal => {
+                        return goal.id !== action.id;
+                    }) 
+                case RECEIVE_DATA :
+                    return action.goals;
                 default:
                 return state; 
             }
@@ -96,7 +109,6 @@
                     //than one or will be store.dispatch
                 }
             }
-
         }
 
         const store = Redux.createStore(Redux.combineReducers({
