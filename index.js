@@ -19,6 +19,8 @@
             }
         }
 
+        //Moving asyncrhonous call to API on an action
+        //Then it is passed ReduThunk in the middleware
         function handleDeleteTodo(todo) { 
             return (dispatch) => {
                 dispatch(removeTodoAction(todo.id));
@@ -30,6 +32,30 @@
             }
         }
 
+        function handleDeleteGoal(goal) {
+            return (dispatch) => {
+                dispatch(removeGoalAction(goal.id))
+                return API.deleteGoal(goal.id) //Removing todo from API
+                .catch(() => {
+                    dispatch(addGoalAction(goal))
+                    alert('An error ocurred. Try again!');
+                })
+            }
+        }
+
+        function handleAddGoal (name, cb) {
+            return (dispatch) => {
+                return API.saveGoal(name)
+                .then(goal => {
+                    dispatch(addGoalAction(goal))
+                    cb();
+                })
+                .catch(() => {
+                    alert('There was an error. Try again!');
+                })
+            }
+        }
+        
         function removeTodoAction(id) {
             return {
                 type: REMOVE_TODO,
@@ -118,7 +144,6 @@
                     ) {
                         return alert(`Nope. That's a bad idea`);
                     }
-        
                     if(
                         action.type === ADD_GOAL &&
                         action.goal.name.toLowerCase().includes('bitcoin')
