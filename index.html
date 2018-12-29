@@ -37,17 +37,20 @@
         }
 
         class Todos extends React.Component {
+            
             addTodo = (e) => {
                 e.preventDefault();
                 const name = this.input.value;
-                this.input.value = '';
-
-                this.props.store.dispatch(addTodoAction({
-                    name,
-                    comlete: false,
-                    id: generateId()
-                }))
+                return API.saveTodo(name)
+                .then(todo => {
+                    this.props.store.dispatch(addTodoAction(todo))
+                    this.input.value = '';
+                }) 
+                .catch(() => {
+                    alert('There was an error. Try again!');
+                })
             }
+
             removeItem = (todo) => {
                 //1. First remove from Redux store(to hide it form the UI
                 //2. Then delete that todo from API. In case of an error, add it again.
@@ -59,6 +62,7 @@
                     alert('An error ocurred. Try again!');
                 })
             }
+
             toggleItem = (id) => {
                 this.props.store.dispatch(toggleTodoAction(id))
                 return API.saveTodoToggle(id)
@@ -66,8 +70,8 @@
                     this.props.store.dispatch(toggleTodoAction(id));
                     alert('An error ocurred. Try again!');
                 })
-                
             }
+
             render() {
                 return (
                     <div>
@@ -78,7 +82,11 @@
                             ref={(input) => this.input = input} 
                         />  
                         <button onClick={this.addTodo}>Add Todo</button>    
-                        <List toggle={this.toggleItem} remove={this.removeItem} items={this.props.todos}/>                 
+                        <List 
+                            toggle={this.toggleItem} 
+                            remove={this.removeItem} 
+                            items={this.props.todos}
+                        />                 
                     </div>
                 )
             }
@@ -94,12 +102,16 @@
             addItem = (e) => {
                 e.preventDefault();
                 const name = this.input.value;
-                this.input.value = '';
-                this.props.store.dispatch(addGoalAction({
-                    id: generateId(),
-                    name
-                }))
+                return API.saveGoal(name)
+                .then(goal => {
+                    this.props.store.dispatch(addGoalAction(goal))
+                    this.input.value = '';
+                })
+                .catch(() => {
+                    alert('There was an error. Try again!');
+                })
             }
+
             removeItem = (goal) => {
                 this.props.store.dispatch(removeGoalAction(goal.id))
                 return API.deleteGoal(goal.id) //Removing todo from API
