@@ -113,58 +113,23 @@
             }
         }
 
-        class ConnectedTodos extends React.Component {
-            render() {
-                return (
-                    <Context.Consumer>
-                        {(store) => {
-                            const { todos } = store.getState();
-                            return <Todos todos={todos} dispatch={store.dispatch}/>
-                        }}
-                    </Context.Consumer>
-                )
-            }
-        }
+        const ConnectedTodos = connect((state) => {
+            todos: state.todos;
+        })(Todos);
 
-        
-        class ConnectedGoals extends React.Component {
-            render() {
-                return (
-                    <Context.Consumer>
-                        {(store) => {
-                            const { goals } = store.getState();
-                            return <Goals goals={goals} dispatch={store.dispatch}/>
-                        }}
-                    </Context.Consumer>
-                )
-            }
-        }
-
-        //This component is in charge of connecting with the store
-        class ConnectedApp extends React.Component {
-            render() {
-                return (
-                    <Context.Consumer> 
-                        {(store) => (
-                            <App store={store}/>
-                        )}
-                    </Context.Consumer>
-                )
-            }
-        }
+        const connectedGoals = connect((state) => {
+            goals: state.goals; //Like saying { goals } = store.getState();
+        })(Goals)
 
         class App extends React.Component {
             componentDidMount () {
-                const {store} = this.props;
+                const { dispatch } = this.props;
 
-                store.dispatch(handleInitialData());
-                store.subscribe(() => this.forceUpdate()) //Usually an antipattern, but for this case every component will re-render
+                dispatch(handleInitialData());
             }
 
             render() {
-                const { store } = this.props;
-                const { loading } = store.getState();
-                if(!!loading) {
+                if(!!this.props.loading) {
                     return (
                         <Loading />
                     )
@@ -179,10 +144,18 @@
             }
         }
 
+        const ConnectedApp = connect((state) => ({
+            loading: state.loading
+        }))(App);
+
+        function connect () {
+            
+        }
+
         //1. Create context 
         const Context = React.createContext();
 
-        //2. Create a class provider to use context
+        //2. Create a class provider to use context. It provides the store globally to all subcomponents
         class Provider extends React.Component {
             render () {
                 return (
