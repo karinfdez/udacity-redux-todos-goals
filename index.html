@@ -12,6 +12,7 @@
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script> 
     <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script> 
     <script src="https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js"></script>
+    <script src="https://unpkg.com/react-redux@5.0.6/dist/react-redux.min.js"></script>
 </head>
 <body>
     <hr />
@@ -56,7 +57,6 @@
             }
 
             render() {
-                console.log('renderind todos');
                 return (
                     <div>
                         <h1>Todo List</h1>
@@ -113,13 +113,13 @@
             }
         }
 
-        const ConnectedTodos = connect((state) => {
-            todos: state.todos;
-        })(Todos);
+        const ConnectedTodos = ReactRedux.connect((state) => ({
+            todos: state.todos
+        }))(Todos);
 
-        const connectedGoals = connect((state) => {
-            goals: state.goals; //Like saying { goals } = store.getState();
-        })(Goals)
+        const ConnectedGoals = ReactRedux.connect((state) => ({
+            goals: state.goals //Like saying { goals } = store.getState();
+        }))(Goals)
 
         class App extends React.Component {
             componentDidMount () {
@@ -144,33 +144,15 @@
             }
         }
 
-        const ConnectedApp = connect((state) => ({
+        const ConnectedApp = ReactRedux.connect((state) => ({
             loading: state.loading
         }))(App);
 
-        function connect () {
-            
-        }
-
-        //1. Create context 
-        const Context = React.createContext();
-
-        //2. Create a class provider to use context. It provides the store globally to all subcomponents
-        class Provider extends React.Component {
-            render () {
-                return (
-                    <Context.Provider value={this.props.store}>
-                        { this.props.children }
-                    </Context.Provider>
-                )
-            }
-        } 
-
         //3. Wrapp the provider with the App
         ReactDOM.render(
-            <Provider store={store}>
+            <ReactRedux.Provider store={store}>
                 <ConnectedApp />
-            </Provider>,
+            </ReactRedux.Provider>,
             document.getElementById('app')
         )
     </script>
